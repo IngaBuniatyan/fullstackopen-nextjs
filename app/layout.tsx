@@ -4,7 +4,7 @@ import "./globals.css";
 
 export const metadata: Metadata = {
   title: "Full Stack Open Blog",
-  description: "Next.js exercises 1–6 for Full Stack Open",
+  description: "Next.js exercises 1–10 for Full Stack Open",
 };
 
 export default function RootLayout({
@@ -23,13 +23,14 @@ export default function RootLayout({
             <div className="nav-links">
               <Link href="/">Home</Link>
               <Link href="/blogs">Blogs</Link>
+              <Link href="/users">Users</Link>
               <Link href="/blogs/new">Create new</Link>
             </div>
           </nav>
         </header>
         <main className="page-shell">{children}</main>
         <footer className="site-footer">
-          Full Stack Open · Next.js Chapter 2
+          Full Stack Open · Next.js Chapters 2–3
         </footer>
       </body>
     </html>

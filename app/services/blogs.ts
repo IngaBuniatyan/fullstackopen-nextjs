@@ -1,65 +1,36 @@
-export type Blog = {
-  id: number;
-  title: string;
-  author: string;
-  url: string;
-  likes: number;
+import { desc, eq, ilike, sql } from "drizzle-orm";
+import { db } from "@/db";
+import { blogs, users, type Blog } from "@/db/schema";
+
+export const getBlogs = async (filter?: string): Promise<Blog[]> => {
+  const cleanFilter = filter?.trim();
+
+  if (cleanFilter) {
+    return db
+      .select()
+      .from(blogs)
+      .where(ilike(blogs.title, `%${cleanFilter}%`))
+      .orderBy(desc(blogs.likes));
+  }
+
+  return db.select().from(blogs).orderBy(desc(blogs.likes));
 };
 
-type BlogStore = {
-  blogs: Blog[];
-  nextId: number;
+export const getBlogById = async (id: number): Promise<Blog | undefined> => {
+  const [blog] = await db
+    .select()
+    .from(blogs)
+    .where(eq(blogs.id, id))
+    .limit(1);
+
+  return blog;
 };
 
-const initialBlogs: Blog[] = [
-  {
-    id: 1,
-    title: "React patterns",
-    author: "Michael Chan",
-    url: "https://reactpatterns.com/",
-    likes: 7,
-  },
-  {
-    id: 2,
-    title: "Go To Statement Considered Harmful",
-    author: "Edsger W. Dijkstra",
-    url: "https://homepages.cwi.nl/~storm/teaching/reader/Dijkstra68.pdf",
-    likes: 5,
-  },
-  {
-    id: 3,
-    title: "Clean Code with Next.js",
-    author: "Robert C. Martin",
-    url: "https://www.oreilly.com/library/view/clean-code-a/9780136083238/",
-    likes: 3,
-  },
-];
-
-const globalWithBlogStore = globalThis as typeof globalThis & {
-  fullStackOpenBlogStore?: BlogStore;
-};
-
-const store =
-  globalWithBlogStore.fullStackOpenBlogStore ??
-  {
-    blogs: initialBlogs.map((blog) => ({ ...blog })),
-    nextId: initialBlogs.length + 1,
-  };
-
-globalWithBlogStore.fullStackOpenBlogStore = store;
-
-let nextId = store.nextId;
-
-const copyBlog = (blog: Blog): Blog => ({ ...blog });
-
-export const getBlogs = (): Blog[] => store.blogs.map(copyBlog);
-
-export const getBlogById = (id: number): Blog | undefined => {
-  const blog = store.blogs.find((candidate) => candidate.id === id);
-  return blog ? copyBlog(blog) : undefined;
-};
-
-export const addBlog = (title: string, author: string, url: string): Blog => {
+export const addBlog = async (
+  title: string,
+  author: string,
+  url: string,
+): Promise<Blog> => {
   const cleanTitle = title.trim();
   const cleanAuthor = author.trim();
   const cleanUrl = url.trim();
@@ -68,30 +39,39 @@ export const addBlog = (title: string, author: string, url: string): Blog => {
     throw new Error("title, author and url are required");
   }
 
-  nextId = Math.max(nextId, store.nextId);
+  const [user] = await db
+    .select({ id: users.id })
+    .from(users)
+    .orderBy(sql`random()`)
+    .limit(1);
 
-  const blog: Blog = {
-    id: nextId,
-    title: cleanTitle,
-    author: cleanAuthor,
-    url: cleanUrl,
-    likes: 0,
-  };
-
-  nextId += 1;
-  store.nextId = nextId;
-  store.blogs.push(blog);
-
-  return copyBlog(blog);
-};
-
-export const incrementBlogLikes = (id: number): Blog | undefined => {
-  const blog = store.blogs.find((candidate) => candidate.id === id);
-
-  if (!blog) {
-    return undefined;
+  if (!user) {
+    throw new Error("a user is required before creating blogs");
   }
 
-  blog.likes += 1;
-  return copyBlog(blog);
+  const [blog] = await db
+    .insert(blogs)
+    .values({
+      title: cleanTitle,
+      author: cleanAuthor,
+      url: cleanUrl,
+      userId: user.id,
+    })
+    .returning();
+
+  return blog;
+};
+
+export const incrementBlogLikes = async (
+  id: number,
+): Promise<Blog | undefined> => {
+  const [blog] = await db
+    .update(blogs)
+    .set({
+      likes: sql`${blogs.likes} + 1`,
+    })
+    .where(eq(blogs.id, id))
+    .returning();
+
+  return blog;
 };

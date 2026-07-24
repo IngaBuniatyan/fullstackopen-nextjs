@@ -19,7 +19,7 @@ export default async function BlogPage({ params }: BlogPageProps) {
     notFound();
   }
 
-  const blog = getBlogById(id);
+  const blog = await getBlogById(id);
 
   if (!blog) {
     notFound();

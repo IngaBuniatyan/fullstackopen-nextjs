@@ -14,13 +14,7 @@ export default async function BlogsPage({ searchParams }: BlogsPageProps) {
   const filter = (
     Array.isArray(rawFilter) ? rawFilter[0] : rawFilter ?? ""
   ).trim();
-  const normalizedFilter = filter.toLocaleLowerCase();
-
-  const blogs = getBlogs()
-    .filter((blog) =>
-      blog.title.toLocaleLowerCase().includes(normalizedFilter),
-    )
-    .sort((first, second) => second.likes - first.likes);
+  const blogs = await getBlogs(filter);
 
   return (
     <section className="space-y-8">

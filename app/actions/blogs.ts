@@ -19,7 +19,7 @@ export async function createBlog(formData: FormData) {
   const author = getRequiredText(formData, "author");
   const url = getRequiredText(formData, "url");
 
-  addBlog(title, author, url);
+  await addBlog(title, author, url);
   revalidatePath("/blogs");
   redirect("/blogs");
 }
@@ -31,7 +31,7 @@ export async function incrementLikes(formData: FormData) {
     throw new Error("valid blog id is required");
   }
 
-  const blog = incrementBlogLikes(id);
+  const blog = await incrementBlogLikes(id);
 
   if (!blog) {
     throw new Error("blog not found");
