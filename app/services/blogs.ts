@@ -1,6 +1,6 @@
 import { desc, eq, ilike, sql } from "drizzle-orm";
 import { db } from "@/db";
-import { blogs, users, type Blog } from "@/db/schema";
+import { blogs, type Blog } from "@/db/schema";
 
 export const getBlogs = async (filter?: string): Promise<Blog[]> => {
   const cleanFilter = filter?.trim();
@@ -30,6 +30,7 @@ export const addBlog = async (
   title: string,
   author: string,
   url: string,
+  userId: number,
 ): Promise<Blog> => {
   const cleanTitle = title.trim();
   const cleanAuthor = author.trim();
@@ -39,23 +40,13 @@ export const addBlog = async (
     throw new Error("title, author and url are required");
   }
 
-  const [user] = await db
-    .select({ id: users.id })
-    .from(users)
-    .orderBy(sql`random()`)
-    .limit(1);
-
-  if (!user) {
-    throw new Error("a user is required before creating blogs");
-  }
-
   const [blog] = await db
     .insert(blogs)
     .values({
       title: cleanTitle,
       author: cleanAuthor,
       url: cleanUrl,
-      userId: user.id,
+      userId,
     })
     .returning();
 

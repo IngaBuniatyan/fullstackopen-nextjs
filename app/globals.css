@@ -52,6 +52,18 @@ button:hover,
   background: var(--accent-dark);
 }
 
+button:focus-visible,
+a:focus-visible,
+input:focus-visible {
+  outline: 3px solid #8da2f1;
+  outline-offset: 2px;
+}
+
+button:disabled {
+  cursor: wait;
+  opacity: 0.65;
+}
+
 .secondary-button {
   border: 1px solid var(--line);
   background: white;
@@ -59,8 +71,12 @@ button:hover,
 }
 
 .site-header {
+  position: sticky;
+  z-index: 20;
+  top: 0;
   border-bottom: 1px solid var(--line);
   background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(12px);
 }
 
 .site-nav,
@@ -88,6 +104,7 @@ button:hover,
 .nav-links {
   display: flex;
   flex-wrap: wrap;
+  align-items: center;
   gap: 1rem;
 }
 
@@ -95,6 +112,17 @@ button:hover,
   color: var(--muted);
   font-weight: 700;
   text-decoration: none;
+}
+
+.signed-in-user {
+  color: var(--ink);
+  font-weight: 800;
+}
+
+.nav-button {
+  min-height: 2.25rem;
+  padding: 0.35rem 0.75rem;
+  font-size: 0.9rem;
 }
 
 .page-shell {
@@ -145,6 +173,8 @@ h1 {
 
 .search-form,
 .blog-form,
+.auth-card,
+.profile-card,
 .detail-card,
 .empty-state {
   border: 1px solid var(--line);
@@ -155,13 +185,15 @@ h1 {
 }
 
 .search-form,
-.blog-form {
+.blog-form,
+.auth-form {
   display: grid;
   gap: 1rem;
 }
 
 .search-form label,
-.blog-form label {
+.blog-form label,
+.auth-form label {
   color: var(--ink);
   font-weight: 700;
 }
@@ -176,13 +208,28 @@ input {
   color: var(--ink);
 }
 
-.blog-form label {
+.blog-form label,
+.auth-form label {
   display: grid;
   gap: 0.45rem;
 }
 
-.blog-form button {
+.blog-form button,
+.auth-form button {
   width: fit-content;
+}
+
+.auth-card {
+  display: grid;
+  max-width: 36rem;
+  gap: 2rem;
+  margin-inline: auto;
+}
+
+.form-error {
+  color: #b42318;
+  font-size: 0.92rem;
+  font-weight: 700;
 }
 
 .blog-card {
@@ -245,6 +292,128 @@ input {
   font-size: 1.05rem;
 }
 
+.profile-layout {
+  display: grid;
+  gap: 1.5rem;
+}
+
+.profile-card {
+  display: grid;
+  gap: 1.25rem;
+}
+
+.profile-card h2 {
+  font-size: 1.6rem;
+  font-weight: 800;
+}
+
+.profile-card h3 {
+  margin-top: 0.75rem;
+  font-size: 1.15rem;
+  font-weight: 800;
+}
+
+.profile-username {
+  color: var(--muted);
+  font-size: 1.1rem;
+  font-weight: 700;
+}
+
+.token-display {
+  overflow-x: auto;
+  border: 1px solid var(--line);
+  border-radius: 0.65rem;
+  background: #f8fafc;
+  padding: 1rem;
+}
+
+.reading-list {
+  display: grid;
+  gap: 0.75rem;
+  margin-top: 0.75rem;
+}
+
+.reading-list li {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  border: 1px solid var(--line);
+  border-radius: 0.75rem;
+  padding: 0.9rem 1rem;
+}
+
+.reading-list button {
+  min-height: 2.25rem;
+  padding: 0.4rem 0.7rem;
+  font-size: 0.85rem;
+}
+
+.markdown {
+  max-width: 52rem;
+}
+
+.markdown h1,
+.markdown h2,
+.markdown h3 {
+  color: var(--ink);
+  font-weight: 800;
+  letter-spacing: -0.03em;
+}
+
+.markdown h1 {
+  margin-bottom: 1.5rem;
+}
+
+.markdown h2 {
+  margin-top: 3rem;
+  font-size: 2rem;
+}
+
+.markdown h3 {
+  margin-top: 2rem;
+  font-size: 1.35rem;
+}
+
+.markdown p {
+  margin-top: 1rem;
+  color: var(--muted);
+  font-size: 1.05rem;
+  line-height: 1.75;
+}
+
+.markdown a {
+  font-weight: 700;
+  text-underline-offset: 0.2em;
+}
+
+.markdown ul,
+.markdown ol {
+  display: grid;
+  gap: 0.6rem;
+  margin: 1rem 0 0 1.5rem;
+  color: var(--muted);
+}
+
+.markdown ul {
+  list-style: disc;
+}
+
+.markdown ol {
+  list-style: decimal;
+}
+
+.markdown li {
+  padding-left: 0.25rem;
+  line-height: 1.6;
+}
+
+.markdown hr {
+  margin-block: 3rem;
+  border: 0;
+  border-top: 1px solid var(--line);
+}
+
 @media (max-width: 40rem) {
   .site-nav,
   .blog-card {
@@ -254,5 +423,19 @@ input {
 
   .site-nav {
     padding-block: 1rem;
+  }
+
+  .nav-links {
+    width: 100%;
+    gap: 0.75rem;
+  }
+
+  .reading-list li {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .page-shell {
+    padding-block: 2.5rem;
   }
 }

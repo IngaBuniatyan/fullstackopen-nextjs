@@ -1,0 +1,42 @@
+# Full Stack Open Blog
+
+A server-rendered blog application with persistent data, authentication and
+personal reading lists.
+
+## What you can do
+
+- Browse and search the [blog collection](/blogs)
+- Explore registered [users](/users)
+- [Create an account](/register) or [open the sign-in page](/login)
+- Create blogs after authentication
+- Build a personal reading list
+- Generate a bearer token for the profile API
+
+## Application features
+
+### Blogs
+
+Blogs are persisted in PostgreSQL, ordered by likes and searchable by title.
+
+### Users and authentication
+
+Credentials authentication protects blog creation and personal account
+features. Every blog belongs to the user who created it.
+
+### Reading List and API
+
+Signed-in users can save other users' blogs, mark them as read and access their
+own public profile data through the authenticated API.
+
+---
+
+## Technologies
+
+1. Next.js with the App Router and React Server Components
+2. React and Server Actions
+3. Drizzle ORM
+4. Neon PostgreSQL
+5. Auth.js
+
+The source is available in the
+[fullstackopen-nextjs repository](https://github.com/IngaBuniatyan/fullstackopen-nextjs).

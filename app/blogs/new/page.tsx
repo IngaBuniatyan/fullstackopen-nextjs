@@ -1,4 +1,4 @@
-import { createBlog } from "@/app/actions/blogs";
+import BlogForm from "@/app/blogs/new/BlogForm";
 
 export default function NewBlogPage() {
   return (
@@ -11,24 +11,7 @@ export default function NewBlogPage() {
         </p>
       </div>
 
-      <form action={createBlog} className="blog-form">
-        <label htmlFor="title">
-          Title
-          <input id="title" name="title" required type="text" />
-        </label>
-
-        <label htmlFor="author">
-          Author
-          <input id="author" name="author" required type="text" />
-        </label>
-
-        <label htmlFor="url">
-          URL
-          <input id="url" name="url" required type="url" />
-        </label>
-
-        <button type="submit">Create</button>
-      </form>
+      <BlogForm />
     </section>
   );
 }

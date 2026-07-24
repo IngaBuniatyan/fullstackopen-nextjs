@@ -1,41 +1,55 @@
 # Full Stack Open – Next.js
 
-Exercises 1–10 from the Next.js section of Full Stack Open.
+Exercises 1–25 from the Next.js section of Full Stack Open.
 
 ## Deployed application
 
 https://fullstackopen-nextjs-ikej.vercel.app
 
-The application uses:
+## Features
 
-- Next.js App Router
-- React Server Components
-- Server Actions
-- TypeScript
-- PostgreSQL on Neon
-- Drizzle ORM and versioned SQL migrations
+- Next.js App Router, React Server Components and Server Actions
+- Auth.js/NextAuth Credentials login with JWT sessions
+- Password hashing with bcryptjs
+- User registration and server-side form validation
+- React Context success and error notifications
+- Responsive Tailwind CSS 4 styling
+- Persistent blogs and users in Neon PostgreSQL
+- Drizzle ORM, relations and versioned SQL migrations
+- Personal profile with replaceable API token
+- Authenticated `GET /api/me` bearer-token endpoint
+- Personal unread/read reading list
+- Static MDX homepage
+- Playwright end-to-end tests and GitHub Actions
+
+## Environment
+
+Local development requires an ignored `.env.local`:
+
+```text
+DATABASE_URL=<Neon connection string>
+AUTH_SECRET=<random secret>
+AUTH_URL=http://localhost:3000
+```
+
+Official tests require an ignored `.env.test` that points to a completely
+separate Neon database:
+
+```text
+DATABASE_URL=<separate test database connection string>
+NEXTAUTH_SECRET=<random test secret>
+NEXTAUTH_URL=http://localhost:3000
+NODE_ENV=test
+```
+
+Never use the production database for the Playwright tests. The test suite
+resets all application data before each test.
 
 ## Install and run
 
 ```sh
 npm install
 npm run dev
-```
-
-Create `.env.local` with the database connection string before starting:
-
-```text
-DATABASE_URL=<Neon connection string>
-```
-
-The environment file is ignored by Git. Generate, apply and inspect database
-migrations with:
-
-```sh
-npm run db:generate
-npm run db:migrate
-npm run db:check
-npm run db:studio
 ```
 
 For a production check:
@@ -45,18 +59,43 @@ npm run build
 npm start
 ```
 
+Database commands:
+
+```sh
+npm run db:generate
+npm run db:migrate
+npm run db:check
+npm run db:studio
+```
+
+Tests:
+
+```sh
+npm run test:e2e
+npm run test:e2e:ui
+```
+
 ## Routes
 
-- `/` – home
+- `/` – static MDX homepage
+- `/login` – credentials login
+- `/register` – registration with server validation
 - `/blogs` – ordered blog list and server-side title search
-- `/blogs/new` – create a blog through a Server Action
-- `/blogs/[id]` – blog details and like action
-- `/users` – users stored in PostgreSQL
-- `/users/[username]` – one user and their related blogs
+- `/blogs/new` – authenticated blog creation
+- `/blogs/[id]` – blog details, likes and reading-list action
+- `/users` – users
+- `/users/[username]` – one user and their blogs
+- `/me` – authenticated profile, API token and reading list
+- `/api/me` – bearer-token profile API
+- `/api/auth/[...nextauth]` – Auth.js handlers
+- `/api/testing/reset` – test-database reset
+- `/api/testing/users` – test user creation
 
-Search URLs are shareable, for example `/blogs?filter=next`.
+The testing endpoints return `403` in production. They must only be used with
+the separate test database.
 
-Blogs and users persist in PostgreSQL. Blog ordering and case-insensitive title
-filtering are performed in the database. Every blog belongs to a user, and new
-blogs are assigned to one existing user at random. The individual user view is
-loaded with one Drizzle relational query.
+## Security
+
+Passwords are stored only as bcrypt hashes. Password hashes and API tokens are
+never returned by the profile API. Environment files, Vercel metadata,
+Playwright reports and build artifacts are ignored by Git.

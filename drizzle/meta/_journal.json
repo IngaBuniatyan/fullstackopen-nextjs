@@ -22,6 +22,27 @@
       "when": 1784878001869,
       "tag": "0002_spicy_joystick",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1784884364823,
+      "tag": "0003_clean_marten_broadcloak",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1784884874639,
+      "tag": "0004_small_shatterstar",
+      "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1784884958211,
+      "tag": "0005_wise_madame_web",
+      "breakpoints": true
     }
   ]
 }

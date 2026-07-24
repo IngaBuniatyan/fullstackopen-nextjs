@@ -3,25 +3,64 @@
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { addBlog, incrementBlogLikes } from "@/app/services/blogs";
+import { getCurrentUser } from "@/app/services/session";
 
-const getRequiredText = (formData: FormData, field: string): string => {
-  const value = String(formData.get(field) ?? "").trim();
-
-  if (!value) {
-    throw new Error(`${field} is required`);
-  }
-
-  return value;
+export type BlogFormState = {
+  errors: {
+    title?: string;
+    author?: string;
+    url?: string;
+  };
+  values: {
+    title: string;
+    author: string;
+    url: string;
+  };
+  success: boolean;
 };
 
-export async function createBlog(formData: FormData) {
-  const title = getRequiredText(formData, "title");
-  const author = getRequiredText(formData, "author");
-  const url = getRequiredText(formData, "url");
+export async function createBlog(
+  _previousState: BlogFormState,
+  formData: FormData,
+): Promise<BlogFormState> {
+  const user = await getCurrentUser();
 
-  await addBlog(title, author, url);
+  if (!user) {
+    redirect("/login");
+  }
+
+  const values = {
+    title: String(formData.get("title") ?? "").trim(),
+    author: String(formData.get("author") ?? "").trim(),
+    url: String(formData.get("url") ?? "").trim(),
+  };
+  const errors: BlogFormState["errors"] = {};
+
+  if (values.title.length < 5) {
+    errors.title = "Title must be at least 5 characters";
+  }
+
+  if (values.author.length < 5) {
+    errors.author = "Author must be at least 5 characters";
+  }
+
+  if (values.url.length < 5) {
+    errors.url = "URL must be at least 5 characters";
+  }
+
+  if (Object.keys(errors).length > 0) {
+    return { errors, values, success: false };
+  }
+
+  await addBlog(values.title, values.author, values.url, user.id);
   revalidatePath("/blogs");
-  redirect("/blogs");
+  revalidatePath(`/users/${user.username}`);
+
+  return {
+    errors: {},
+    values: { title: "", author: "", url: "" },
+    success: true,
+  };
 }
 
 export async function incrementLikes(formData: FormData) {

@@ -35,13 +35,16 @@ export default async function BlogsPage({ searchParams }: BlogsPageProps) {
         <label htmlFor="filter">Search by title</label>
         <div className="flex flex-col gap-3 sm:flex-row">
           <input
+            data-testid="filter-input"
             defaultValue={filter}
             id="filter"
             name="filter"
             placeholder="React"
             type="search"
           />
-          <button type="submit">Search</button>
+          <button data-testid="search-button" type="submit">
+            Search
+          </button>
           {filter && (
             <Link className="secondary-button" href="/blogs">
               Clear
@@ -51,7 +54,7 @@ export default async function BlogsPage({ searchParams }: BlogsPageProps) {
       </form>
 
       {blogs.length > 0 ? (
-        <ul className="grid gap-4">
+        <ul className="grid gap-4" data-testid="blogs-list">
           {blogs.map((blog) => (
             <li className="blog-card" key={blog.id}>
               <div>
