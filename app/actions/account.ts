@@ -33,12 +33,16 @@ export async function generateApiToken() {
     redirect("/login");
   }
 
+  const token = randomUUID();
+
   await db
     .update(users)
-    .set({ token: randomUUID() })
+    .set({ token })
     .where(eq(users.id, user.id));
 
   revalidatePath("/me");
+
+  return { token };
 }
 
 export async function addToReadingList(formData: FormData) {

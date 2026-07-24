@@ -1,11 +1,9 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
-import {
-  generateApiToken,
-  markReadingListEntryRead,
-} from "@/app/actions/account";
+import { markReadingListEntryRead } from "@/app/actions/account";
 import { getReadingListWithBlogs } from "@/app/services/reading-list";
 import { getCurrentUser } from "@/app/services/session";
+import ApiTokenSection from "./ApiTokenSection";
 
 export const dynamic = "force-dynamic";
 
@@ -30,23 +28,7 @@ export default async function MePage() {
         </p>
       </div>
 
-      <section className="profile-card" data-testid="api-token-section">
-        <h2>API token</h2>
-        {user.token ? (
-          <div className="token-display" data-testid="token-display">
-            <code data-testid="api-token">{user.token}</code>
-          </div>
-        ) : (
-          <p data-testid="no-token-message">
-            You have not generated an API token yet.
-          </p>
-        )}
-        <form action={generateApiToken}>
-          <button data-testid="generate-token-button" type="submit">
-            {user.token ? "Replace token" : "Generate token"}
-          </button>
-        </form>
-      </section>
+      <ApiTokenSection initialToken={user.token} />
 
       <section className="profile-card" data-testid="reading-list-section">
         <h2>Reading list</h2>
